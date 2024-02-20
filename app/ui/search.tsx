@@ -1,22 +1,25 @@
-'use client'; // meaning that this is a clint compenent and can make use of react hooks
+'use client'; // meaning that this is a clint compenent and can make use of normal react hooks
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'; // search icon
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useDebouncedCallback } from 'use-debounce';
 
 export default function Search({ placeholder }: { placeholder: string }) {
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams(); // 
   const pathName = usePathname();
   const { replace } = useRouter();
 
-  function handleSearch(term: string) {
+  const handleSearch = useDebouncedCallback((term: string) => {
+    console.log(`Searching...${term}`);
     const params = new URLSearchParams(searchParams);
+    params.set("page", "1");
     if (term) {
       params.set("query", term)
     } else {
       params.delete("query")
     }
     replace(`${pathName}?${params.toString()}`);
-  }
+  }, 400)
 
   return (
     <div className="relative flex flex-1 flex-shrink-0">
